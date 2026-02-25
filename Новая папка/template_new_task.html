@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>ОГЭ Задание XX - НАЗВАНИЕ ЗАДАНИЯ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        /* ССЫЛКА НА МАГАЗИН */
+        .home-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: transform 0.2s;
+        }
+        
+        .home-link:hover {
+            transform: scale(1.05);
+        }
+        
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            opacity: 0.95;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        
+        .theory-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .theory-card h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+        
+        .formula {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .problem {
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .problem-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .difficulty {
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        
+        .easy { background: #c8e6c9; color: #2e7d32; }
+        .medium { background: #fff9c4; color: #f57f17; }
+        .hard { background: #ffcdd2; color: #c62828; }
+        
+        .year {
+            color: #666;
+            font-size: 0.85rem;
+        }
+        
+        .problem-text {
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+        
+        .answer-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            -webkit-appearance: none;
+        }
+        
+        .check-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        
+        .check-btn:hover {
+            background: #5a6fd6;
+        }
+        
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .correct {
+            background: #c8e6c9;
+            color: #2e7d32;
+            display: block;
+        }
+        
+        .incorrect {
+            background: #ffcdd2;
+            color: #c62828;
+            display: block;
+        }
+        
+        .hint-btn {
+            background: transparent;
+            border: 1px solid #667eea;
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            width: 100%;
+        }
+        
+        .hint {
+            display: none;
+            background: #e8eaf6;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .properties-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .properties-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .properties-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @media (max-width: 768px) {
+            .home-link {
+                font-size: 1rem;
+                top: 15px;
+                left: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ССЫЛКА НА ГЛАВНУЮ -->
+    <a href="index.html" class="home-link">🏠 Магазин</a>
+    
+    <header>
+        <h1>📐 ОГЭ Задание XX</h1>
+        <p class="subtitle">НАЗВАНИЕ ЗАДАНИЯ</p>
+    </header>
+    
+    <div class="container">
+        <!-- ТЕОРИЯ -->
+        <div class="section">
+            <h2>📚 Теория</h2>
+            
+            <div class="theory-card">
+                <h4>Название темы</h4>
+                <div class="formula">Формула или важное правило</div>
+                <p>Описание теории...</p>
+            </div>
+            
+            <h3>Ключевые свойства</h3>
+            <ul class="properties-list">
+                <li>Свойство 1</li>
+                <li>Свойство 2</li>
+                <li>Свойство 3</li>
+            </ul>
+        </div>
+        
+        <!-- ПРАКТИКА -->
+        <div class="section">
+            <h2>✏️ Практика — Задачи из ОГЭ</h2>
+            <p style="margin-bottom: 15px; color: #666;">Задачи для тренировки:</p>
+            
+            <!-- ЗАДАЧА 1 (Пример) -->
+            <div class="problem" data-difficulty="easy">
+                <div class="problem-header">
+                    <span class="problem-number">1</span>
+                    <span class="year">2023 ОГЭ</span>
+                    <span class="difficulty easy">Лёгкий</span>
+                </div>
+                <p class="problem-text">Текст задачи...</p>
+                <input type="number" class="answer-input" id="ans1" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(1, 42, 'easy')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(1)">Подсказка</button>
+                <div class="hint" id="hint1">Текст подсказки...</div>
+                <div class="result" id="result1"></div>
+            </div>
+            
+            <!-- Добавьте больше задач по аналогии -->
+        </div>
+        
+        <!-- СОВЕТЫ -->
+        <div class="section">
+            <h2>💡 Советы по подготовке к ОГЭ</h2>
+            <ul class="properties-list">
+                <li>Совет 1</li>
+                <li>Совет 2</li>
+                <li>Совет 3</li>
+            </ul>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2026 ОГЭ Задание XX. Образовательный ресурс.</p>
+        <p>Сделано для учеников ❤️</p>
+    </footer>
+    
+    <!-- СИСТЕМА ПООЩРЕНИЯ -->
+    <script src="reward-system.js"></script>
+    <script>
+        // Инициализация трекера прогресса
+        document.addEventListener('DOMContentLoaded', function() {
+            RewardSystem.createProgressTracker(17); // Укажите общее количество задач
+            RewardSystem.askStudentName();
+        });
+        
+        // Проверка числовых ответов
+        function checkAnswer(id, correctAnswer, difficulty) {
+            const input = document.getElementById('ans' + id);
+            const result = document.getElementById('result' + id);
+            const userAnswer = parseFloat(input.value);
+            
+            if (isNaN(userAnswer)) {
+                result.textContent = '⚠️ Введите число';
+                result.className = 'result incorrect';
+                return;
+            }
+            
+            if (Math.abs(userAnswer - correctAnswer) < 0.01) {
+                result.textContent = '✅ Правильно! Молодец!';
+                result.className = 'result correct';
+                
+                // Начисляем монеты
+                if (typeof RewardSystem !== 'undefined') {
+                    RewardSystem.rewardForTask(difficulty, 'taskXX_' + id);
+                }
+            } else {
+                result.textContent = '❌ Неправильно. Попробуй ещё раз!';
+                result.className = 'result incorrect';
+                
+                // Штраф за неправильный ответ
+                if (typeof RewardSystem !== 'undefined') {
+                    RewardSystem.penalizeWrongAnswer();
+                }
+            }
+        }
+        
+        // Показать/скрыть подсказку
+        function toggleHint(id) {
+            const hint = document.getElementById('hint' + id);
+            hint.style.display = hint.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        // Обработка Enter
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.answer-input');
+            inputs.forEach(function(input) {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const btn = this.nextElementSibling;
+                        if (btn && btn.classList.contains('check-btn')) {
+                            btn.click();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
