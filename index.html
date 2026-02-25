@@ -2,61 +2,125 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ОГЭ Экономика</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>🎮 ОГЭ Экономика | Зарабатывай кристаллы!</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;color:#333}
-        .container{max-width:900px;margin:0 auto;padding:15px}
-        header{text-align:center;padding:30px 15px;color:#fff}
-        h1{font-size:2rem;margin-bottom:5px}
-        .subtitle{font-size:1rem;opacity:.9}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;color:#333;line-height:1.6}
+        .container{max-width:1200px;margin:0 auto;padding:20px}
         
-        .balance{background:#fff;border-radius:15px;padding:20px;margin-bottom:20px;text-align:center;box-shadow:0 5px 20px rgba(0,0,0,.2)}
-        .balance-row{display:flex;justify-content:center;gap:30px;flex-wrap:wrap}
-        .balance-item{padding:10px}
-        .balance-icon{font-size:2.5rem}
-        .balance-amount{font-size:2rem;font-weight:bold;color:#667eea}
-        .balance-label{color:#666;font-size:.9rem}
+        header{text-align:center;padding:40px 20px;color:#fff}
+        h1{font-size:clamp(2rem,6vw,3rem);margin-bottom:10px;text-shadow:2px 2px 4px rgba(0,0,0,.2)}
+        .subtitle{font-size:clamp(1rem,3vw,1.3rem);opacity:.95}
         
-        .section{background:#fff;border-radius:15px;padding:20px;margin-bottom:20px;box-shadow:0 3px 15px rgba(0,0,0,.1)}
-        .section-title{font-size:1.3rem;color:#667eea;margin-bottom:15px}
+        .balance-section{background:#fff;border-radius:20px;padding:30px;margin-bottom:30px;box-shadow:0 10px 40px rgba(0,0,0,.2);text-align:center}
+        .balance-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;margin-bottom:20px}
+        .balance-item{padding:25px;border-radius:15px;background:linear-gradient(135deg,#f5f7fa 0%,#e4e8ec 100%);transition:transform .3s}
+        .balance-item:hover{transform:scale(1.05)}
+        .balance-icon{font-size:3.5rem;margin-bottom:10px}
+        .balance-amount{font-size:3rem;font-weight:bold;color:#667eea}
+        .balance-label{color:#666;font-size:1rem;margin-top:5px}
+        .streak-badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#ff6b6b 0%,#ee5a5a 100%);color:#fff;padding:10px 20px;border-radius:25px;font-weight:bold;font-size:1.1rem;margin-top:15px}
+        .student-name{font-size:1.3rem;color:#667eea;margin-top:15px;padding:10px 20px;background:#f0f4ff;border-radius:10px;display:inline-block}
         
-        .tasks{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
-        .task{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px;padding:15px;text-align:center;text-decoration:none;transition:transform .2s}
-        .task:hover{transform:scale(1.03)}
-        .task-num{font-size:1.8rem;font-weight:bold}
-        .task-name{font-size:.85rem;margin-top:5px}
-        .task-reward{font-size:.75rem;background:rgba(255,255,255,.2);padding:3px 8px;border-radius:10px;margin-top:8px;display:inline-block}
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:30px}
+        .stat-card{background:#fff;border-radius:15px;padding:25px;text-align:center;box-shadow:0 5px 20px rgba(0,0,0,.1);transition:transform .3s}
+        .stat-card:hover{transform:translateY(-5px)}
+        .stat-icon{font-size:2.5rem;margin-bottom:10px}
+        .stat-value{font-size:2rem;font-weight:bold;color:#667eea}
+        .stat-label{color:#666;font-size:.95rem;margin-top:5px}
         
-        .shop-btn{display:block;background:linear-gradient(135deg,#ffd700,#ffaa00);color:#333;text-align:center;padding:15px;border-radius:25px;text-decoration:none;font-weight:bold;font-size:1.1rem;margin:20px 0}
-        .shop-btn:hover{transform:scale(1.02)}
+        .section{background:#fff;border-radius:20px;padding:30px;margin-bottom:30px;box-shadow:0 5px 20px rgba(0,0,0,.1)}
+        .section-title{font-size:1.8rem;color:#667eea;margin-bottom:25px;display:flex;align-items:center;gap:10px}
         
-        .rules{background:#f0f4ff;padding:15px;border-radius:10px}
-        .rules li{margin:8px 0}
+        .tasks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:15px}
+        .task-card{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border-radius:15px;padding:25px 20px;text-align:center;text-decoration:none;transition:all .3s;cursor:pointer}
+        .task-card:hover{transform:scale(1.05);box-shadow:0 10px 30px rgba(102,126,234,.4)}
+        .task-number{font-size:2.5rem;font-weight:bold;margin-bottom:5px}
+        .task-name{font-size:.95rem;opacity:.95;margin-bottom:10px}
+        .task-progress{font-size:.85rem;background:rgba(255,255,255,.2);padding:5px 10px;border-radius:10px;margin-top:8px}
+        .task-reward{font-size:.8rem;background:rgba(255,255,255,.15);padding:3px 8px;border-radius:8px;margin-top:5px;display:inline-block}
+        
+        .earn-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
+        .earn-item{display:flex;align-items:center;gap:15px;padding:20px;background:#f8f9fa;border-radius:12px;border-left:4px solid #667eea}
+        .earn-icon{font-size:2rem}
+        .earn-info{flex:1}
+        .earn-name{font-weight:bold;color:#333;margin-bottom:3px}
+        .earn-reward{color:#667eea;font-weight:bold}
+        
+        .info-box{background:#e3f2fd;border-left:4px solid #2196f3;padding:20px;border-radius:0 12px 12px 0;margin-top:20px}
+        .info-title{font-weight:bold;color:#1976d2;margin-bottom:10px}
+        
+        .shop-btn{display:block;background:linear-gradient(135deg,#ffd700 0%,#ffaa00 100%);color:#333;text-align:center;padding:18px 35px;border-radius:30px;text-decoration:none;font-weight:bold;font-size:1.1rem;margin:20px 0;box-shadow:0 5px 20px rgba(255,215,0,.4);transition:all .3s}
+        .shop-btn:hover{transform:scale(1.05)}
+        
+        .action-buttons{display:flex;gap:15px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+        .action-btn{padding:15px 30px;border-radius:25px;font-size:1rem;font-weight:bold;cursor:pointer;transition:all .3s;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:10px}
+        .action-btn.primary{background:#fff;color:#667eea;border:2px solid #667eea}
+        .action-btn.secondary{background:rgba(255,255,255,.2);color:#fff;border:2px solid #fff}
+        .action-btn:hover{transform:scale(1.05)}
+        
+        .achievements-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:15px}
+        .achievement{background:#f5f5f5;border-radius:12px;padding:20px 15px;text-align:center;transition:all .3s}
+        .achievement.unlocked{background:linear-gradient(135deg,#ffd700 0%,#ffaa00 100%);color:#fff;box-shadow:0 5px 15px rgba(255,215,0,.4)}
+        .achievement-icon{font-size:2.5rem;margin-bottom:10px}
+        .achievement-name{font-size:.85rem;font-weight:bold}
         
         footer{text-align:center;padding:20px;color:#fff;opacity:.8}
+        
+        @media(max-width:768px){
+            .container{padding:15px}
+            .balance-grid{grid-template-columns:1fr 1fr}
+            .tasks-grid{grid-template-columns:repeat(2,1fr)}
+            .action-buttons{flex-direction:column}
+            .action-btn{width:100%;justify-content:center}
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>💎 ОГЭ Экономика</h1>
-            <p class="subtitle">Решай задачи — зарабатывай кристаллы — получай призы!</p>
+            <h1>🎮 ОГЭ Экономика</h1>
+            <p class="subtitle">Решай задачи — зарабатывай кристаллы — получай реальные призы!</p>
         </header>
         
-        <div class="balance">
-            <div class="balance-row">
+        <div class="balance-section">
+            <div class="balance-grid">
                 <div class="balance-item">
                     <div class="balance-icon">💎</div>
                     <div class="balance-amount" id="crystals">0</div>
-                    <div class="balance-label">кристаллов</div>
+                    <div class="balance-label">кристаллов<br>(тратятся)</div>
                 </div>
                 <div class="balance-item">
                     <div class="balance-icon">⭐</div>
                     <div class="balance-amount" id="xp">0</div>
-                    <div class="balance-label">XP</div>
+                    <div class="balance-label">XP<br>(постоянный рейтинг)</div>
                 </div>
+            </div>
+            <div class="student-name" id="student-name" style="display:none">👤 <span id="name-text"></span></div>
+            <div class="streak-badge" id="streak-badge" style="display:none">🔥 <span id="streak-days">0</span> дней подряд</div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-value" id="stat-solved">0</div>
+                <div class="stat-label">Решено заданий</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value" id="stat-accuracy">0%</div>
+                <div class="stat-label">Точность</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value" id="stat-streak">0</div>
+                <div class="stat-label">Лучшая серия</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-value" id="stat-achievements">0</div>
+                <div class="stat-label">Достижений</div>
             </div>
         </div>
         
@@ -64,44 +128,152 @@
         
         <div class="section">
             <div class="section-title">📚 Задания ОГЭ</div>
-            <div class="tasks">
-                <a href="oge15.html" class="task">
-                    <div class="task-num">15</div>
+            <div class="tasks-grid">
+                <a href="oge15.html" class="task-card">
+                    <div class="task-number">15</div>
                     <div class="task-name">Треугольники</div>
-                    <div class="task-reward">+5-15 💎</div>
+                    <div class="task-progress" id="progress-15">0/17 решено</div>
+                    <div class="task-reward">💎 5-15/задание</div>
                 </a>
-                <a href="oge16.html" class="task">
-                    <div class="task-num">16</div>
+                <a href="oge16.html" class="task-card">
+                    <div class="task-number">16</div>
                     <div class="task-name">Окружность</div>
-                    <div class="task-reward">+5-15 💎</div>
+                    <div class="task-progress" id="progress-16">0/17 решено</div>
+                    <div class="task-reward">💎 5-15/задание</div>
                 </a>
-                <a href="oge_task17.html" class="task">
-                    <div class="task-num">17</div>
-                    <div class="task-name">Площади</div>
-                    <div class="task-reward">+5-15 💎</div>
+                <a href="oge_task17.html" class="task-card">
+                    <div class="task-number">17</div>
+                    <div class="task-name">Площади фигур</div>
+                    <div class="task-progress" id="progress-17">0/17 решено</div>
+                    <div class="task-reward">💎 5-15/задание</div>
                 </a>
-                <a href="oge_task18.html" class="task">
-                    <div class="task-num">18</div>
-                    <div class="task-name">Клетчатая</div>
-                    <div class="task-reward">+5-15 💎</div>
+                <a href="oge_task18.html" class="task-card">
+                    <div class="task-number">18</div>
+                    <div class="task-name">На клетчатой бумаге</div>
+                    <div class="task-progress" id="progress-18">0/17 решено</div>
+                    <div class="task-reward">💎 5-15/задание</div>
                 </a>
-                <a href="oge_task19.html" class="task">
-                    <div class="task-num">19</div>
-                    <div class="task-name">Утверждения</div>
-                    <div class="task-reward">+5-15 💎</div>
+                <a href="oge_task19.html" class="task-card">
+                    <div class="task-number">19</div>
+                    <div class="task-name">Геометрические утверждения</div>
+                    <div class="task-progress" id="progress-19">0/17 решено</div>
+                    <div class="task-reward">💎 5-15/задание</div>
                 </a>
             </div>
         </div>
         
         <div class="section">
-            <div class="section-title">💰 Как заработать</div>
-            <ul class="rules">
-                <li><strong>Лёгкое задание</strong> — +5 💎</li>
-                <li><strong>Среднее задание</strong> — +10 💎</li>
-                <li><strong>Сложное задание</strong> — +15 💎</li>
-                <li><strong>5 правильных подряд</strong> — +20 💎 бонус</li>
-                <li><strong>Макс. 1000 💎</strong> — всё свыше в XP</li>
-            </ul>
+            <div class="section-title">💰 Как заработать кристаллы</div>
+            <div class="earn-list">
+                <div class="earn-item">
+                    <div class="earn-icon">📖</div>
+                    <div class="earn-info">
+                        <div class="earn-name">Посещение занятия</div>
+                        <div class="earn-reward">+20 💎</div>
+                    </div>
+                </div>
+                <div class="earn-item">
+                    <div class="earn-icon">📝</div>
+                    <div class="earn-info">
+                        <div class="earn-name">Сданное ДЗ в срок</div>
+                        <div class="earn-reward">+30 💎</div>
+                    </div>
+                </div>
+                <div class="earn-item">
+                    <div class="earn-icon">✅</div>
+                    <div class="earn-info">
+                        <div class="earn-name">Лёгкое задание</div>
+                        <div class="earn-reward">+5 💎</div>
+                    </div>
+                </div>
+                <div class="earn-item">
+                    <div class="earn-icon">⭐</div>
+                    <div class="earn-info">
+                        <div class="earn-name">Среднее задание</div>
+                        <div class="earn-reward">+10 💎</div>
+                    </div>
+                </div>
+                <div class="earn-item">
+                    <div class="earn-icon">🚀</div>
+                    <div class="earn-info">
+                        <div class="earn-name">Сложное задание</div>
+                        <div class="earn-reward">+15 💎</div>
+                    </div>
+                </div>
+                <div class="earn-item">
+                    <div class="earn-icon">🔥</div>
+                    <div class="earn-info">
+                        <div class="earn-name">Стрик 7 дней</div>
+                        <div class="earn-reward">+50 💎</div>
+                    </div>
+                </div>
+                <div class="earn-item">
+                    <div class="earn-icon">⚡</div>
+                    <div class="earn-info">
+                        <div class="earn-name">5 правильных подряд</div>
+                        <div class="earn-reward">+20 💎</div>
+                    </div>
+                </div>
+                <div class="earn-item">
+                    <div class="earn-icon">🎁</div>
+                    <div class="earn-info">
+                        <div class="earn-name">Ежедневный бонус</div>
+                        <div class="earn-reward">+10-50 💎</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <div class="info-title">💡 Важно знать</div>
+                <ul style="padding-left:20px;color:#333">
+                    <li>Максимум <strong>1000 💎</strong> — всё свыше конвертируется в XP</li>
+                    <li>Каждые <strong>90 дней</strong> сгорает 20% кристаллов (трать быстрее!)</li>
+                    <li>Стрик обрывается, если пропустить <strong>2 дня</strong> подряд</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">🏆 Достижения</div>
+            <div class="achievements-grid" id="achievements-container">
+                <div class="achievement unlocked">
+                    <div class="achievement-icon">🎯</div>
+                    <div class="achievement-name">Первый шаг</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">📚</div>
+                    <div class="achievement-name">Ученик</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">🎓</div>
+                    <div class="achievement-name">Эксперт</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">🏆</div>
+                    <div class="achievement-name">Мастер ОГЭ</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">🔥</div>
+                    <div class="achievement-name">Серия!</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">⚡</div>
+                    <div class="achievement-name">Легенда!</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">💰</div>
+                    <div class="achievement-name">Богач</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">👑</div>
+                    <div class="achievement-name">Миллионер</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-btn primary" onclick="changeName()">✏️ Изменить имя</button>
+            <button class="action-btn secondary" onclick="resetProgress()">🗑️ Сбросить прогресс</button>
         </div>
         
         <footer>
@@ -111,13 +283,57 @@
 
     <script src="reward-system-v2.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded',function(){
+        function updateDisplay(){
             try{
-                var s=OGEEconomy?OGEEconomy.getStats():{crystals:0,xp:0};
+                var s=OGEEconomy?OGEEconomy.getStats():{crystals:0,xp:0,streak:0,name:'',correctStreak:0};
                 document.getElementById('crystals').textContent=s.crystals||0;
                 document.getElementById('xp').textContent=s.xp||0;
-                OGEEconomy&&OGEEconomy.askStudentName();
+                
+                if(s.name){
+                    document.getElementById('name-text').textContent=s.name;
+                    document.getElementById('student-name').style.display='inline-block';
+                }
+                
+                if(s.streak>0){
+                    document.getElementById('streak-days').textContent=s.streak;
+                    document.getElementById('streak-badge').style.display='inline-flex';
+                }
+                
+                document.getElementById('stat-streak').textContent=s.maxStreak||s.streak||0;
             }catch(e){console.log(e)}
+        }
+        
+        function updateTaskProgress(){
+            try{
+                var progress=OGEEconomy?OGEEconomy.progress:{};
+                var tasks=[{id:15,total:17},{id:16,total:17},{id:17,total:17},{id:18,total:17},{id:19,total:17}];
+                tasks.forEach(function(task){
+                    var solved=Object.keys(progress).filter(function(k){return k.startsWith('task'+task.id+'_')&&progress[k].solved}).length;
+                    var el=document.getElementById('progress-'+task.id);
+                    if(el)el.textContent=solved+'/'+task.total+' решено';
+                });
+            }catch(e){console.log(e)}
+        }
+        
+        function changeName(){
+            var newName=prompt('Введи своё имя:',(OGEEconomy&&OGEEconomy.data&&OGEEconomy.data.name)||'');
+            if(newName&&newName.trim()){
+                if(OGEEconomy)OGEEconomy.setName(newName.trim());
+                location.reload();
+            }
+        }
+        
+        function resetProgress(){
+            if(confirm('⚠️ Сбросить ВЕСЬ прогресс? Баланс, достижения и история будут удалены!')){
+                localStorage.clear();
+                location.reload();
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded',function(){
+            updateDisplay();
+            updateTaskProgress();
+            if(OGEconomy)OGEconomy.askName();
         });
     </script>
 </body>
