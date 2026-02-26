@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>💎 Лавка призов | ОГЭ Экономика</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* ШАПКА */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+        
+        h1 {
+            font-size: clamp(2rem, 6vw, 3rem);
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            opacity: 0.95;
+        }
+        
+        /* НАВИГАЦИЯ */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-tab {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .nav-tab:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+        }
+        
+        /* БАЛАНС */
+        .balance-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .balance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+        
+        .balance-item {
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+        }
+        
+        .balance-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .balance-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .student-name {
+            font-size: 1.3rem;
+            color: #667eea;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #f0f4ff;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        /* СЕКЦИИ */
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* КАРТОЧКИ ТОВАРОВ */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .shop-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .shop-card.sold-out {
+            opacity: 0.6;
+        }
+        
+        .shop-card.sold-out::after {
+            content: 'РАСПРОДАНО';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: #f44336;
+            color: white;
+            padding: 10px 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .shop-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .shop-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .shop-desc {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            text-align: center;
+            min-height: 45px;
+        }
+        
+        .shop-stock {
+            text-align: center;
+            color: #999;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+        
+        .shop-price {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .buy-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .buy-btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .buy-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* АУКЦИОН */
+        .auction-item {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .auction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .auction-title {
+            font-size: 1.5rem;
+            color: #333;
+        }
+        
+        .auction-status {
+            background: #ffd700;
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .auction-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .auction-info-item {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .auction-info-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .auction-info-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .bid-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .bid-input {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .bid-btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+            color: #333;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .bid-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+        }
+        
+        .auction-rules {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        
+        /* РЕЙТИНГ */
+        .leaderboard {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .leaderboard-title {
+            font-size: 1.5rem;
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+        
+        .leaderboard-item:hover {
+            background: #f5f5f5;
+        }
+        
+        .leaderboard-rank {
+            font-size: 1.5rem;
+            font-weight: bold;
+            width: 50px;
+            text-align: center;
+        }
+        
+        .leaderboard-rank.gold { color: #ffd700; }
+        .leaderboard-rank.silver { color: #c0c0c0; }
+        .leaderboard-rank.bronze { color: #cd7f32; }
+        
+        .leaderboard-name {
+            flex: 1;
+            font-size: 1.1rem;
+        }
+        
+        .leaderboard-xp {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        /* ИСТОРИЯ */
+        .history-list {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-info {
+            flex: 1;
+        }
+        
+        .history-name {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .history-date {
+            color: #999;
+            font-size: 0.85rem;
+        }
+        
+        .history-status {
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        
+        .history-status.pending {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+        
+        .history-status.delivered {
+            background: #e8f5e9;
+            color: #4caf50;
+        }
+        
+        /* КНОПКИ */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .action-btn.primary {
+            background: white;
+            color: #667eea;
+        }
+        
+        .action-btn.secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        /* МОДАЛЬНОЕ ОКНО */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            animation: modalPopup 0.3s ease-out;
+        }
+        
+        .modal-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.8rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .modal-text {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+        
+        .modal-close {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        @keyframes modalPopup {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* АДАПТИВНОСТЬ */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-tab {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .shop-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .auction-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .bid-section {
+                flex-direction: column;
+            }
+            
+            .bid-input, .bid-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ШАПКА -->
+        <header>
+            <h1>💎 Лавка призов</h1>
+            <p class="subtitle">Трать кристаллы на реальные призы!</p>
+        </header>
+        
+        <!-- БАЛАНС -->
+        <div class="balance-section">
+            <div class="balance-grid">
+                <div class="balance-item">
+                    <div class="balance-icon">💎</div>
+                    <div class="balance-amount" id="crystals">0</div>
+                    <div class="balance-label">кристаллов</div>
+                </div>
+                <div class="balance-item">
+                    <div class="balance-icon">⭐</div>
+                    <div class="balance-amount" id="xp">0</div>
+                    <div class="balance-label">XP (рейтинг)</div>
+                </div>
+            </div>
+            <div class="student-name" id="student-name" style="display: none;">
+                👤 <span id="name-text"></span>
+            </div>
+            <div class="streak-badge" id="streak-badge" style="display: none;">
+                🔥 <span id="streak-days">0</span> дней подряд
+            </div>
+        </div>
+        
+        <!-- НАВИГАЦИЯ -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('shop')">🛒 Магазин</button>
+            <button class="nav-tab" onclick="showSection('auction')">🏆 Аукцион</button>
+            <button class="nav-tab" onclick="showSection('leaderboard')">📊 Рейтинг</button>
+            <button class="nav-tab" onclick="showSection('history')">📜 История</button>
+        </div>
+        
+        <!-- МАГАЗИН -->
+        <div id="shop-section" class="section active">
+            <div class="shop-grid" id="shop-grid">
+                <!-- Товары будут добавлены через JS -->
+            </div>
+        </div>
+        
+        <!-- АУКЦИОН -->
+        <div id="auction-section" class="section">
+            <div id="auction-container">
+                <!-- Аукционные товары будут добавлены через JS -->
+            </div>
+            
+            <div class="auction-rules">
+                <strong>📋 Правила аукциона:</strong>
+                <ul style="margin-top: 10px; padding-left: 20px;">
+                    <li>Ставки принимаются до последнего дня месяца</li>
+                    <li>Побеждает highest bidder (закрытые ставки)</li>
+                    <li>Если никто не набрал минимум — приз переносится</li>
+                    <li>Победитель получает приз в начале следующего месяца</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- РЕЙТИНГ -->
+        <div id="leaderboard-section" class="section">
+            <div class="leaderboard">
+                <div class="leaderboard-title">🏆 Топ учеников по XP</div>
+                <div id="leaderboard-list">
+                    <!-- Рейтинг будет добавлен через JS -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- ИСТОРИЯ -->
+        <div id="history-section" class="section">
+            <div class="history-list">
+                <div class="leaderboard-title">📜 История покупок</div>
+                <div id="history-list">
+                    <!-- История будет добавлена через JS -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- КНОПКИ -->
+        <div class="action-buttons">
+            <button class="action-btn primary" onclick="changeName()">✏️ Изменить имя</button>
+            <button class="action-btn secondary" onclick="goToTasks()">📚 К заданиям</button>
+        </div>
+    </div>
+    
+    <!-- МОДАЛЬНОЕ ОКНО -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-icon" id="modal-icon">🎉</div>
+            <div class="modal-title" id="modal-title">Поздравляем!</div>
+            <div class="modal-text" id="modal-text">Ты купил приз!</div>
+            <button class="modal-close" onclick="closeModal()">Отлично!</button>
+        </div>
+    </div>
+
+    <script src="reward-system-v2.js"></script>
+    <script>
+        // ═══════════════════════════════════════════════════════════════════════
+        // ИНИЦИАЛИЗАЦИЯ
+        // ═══════════════════════════════════════════════════════════════════════
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDisplay();
+            renderShop();
+            renderAuction();
+            renderLeaderboard();
+            renderHistory();
+        });
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // ОБНОВЛЕНИЕ ОТОБРАЖЕНИЯ
+        // ═══════════════════════════════════════════════════════════════════════
+        function updateDisplay() {
+            let stats;
+            try {
+                stats = OGEEconomy ? OGEEconomy.getStats() : { crystals: 0, xp: 0, studentName: '', streak: 0 };
+            } catch (e) {
+                stats = { crystals: 0, xp: 0, studentName: '', streak: 0 };
+            }
+            
+            document.getElementById('crystals').textContent = stats.crystals || 0;
+            document.getElementById('xp').textContent = stats.xp || 0;
+            
+            if (stats.studentName) {
+                document.getElementById('name-text').textContent = stats.studentName;
+                document.getElementById('student-name').style.display = 'inline-block';
+            }
+            
+            if (stats.streak > 0) {
+                document.getElementById('streak-days').textContent = stats.streak;
+                document.getElementById('streak-badge').style.display = 'inline-flex';
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // НАВИГАЦИЯ
+        // ═══════════════════════════════════════════════════════════════════════
+        function showSection(section) {
+            // Скрываем все секции
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            
+            // Показываем нужную
+            document.getElementById(section + '-section').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // МАГАЗИН
+        // ═══════════════════════════════════════════════════════════════════════
+        function renderShop() {
+            const grid = document.getElementById('shop-grid');
+            if (!grid) return;
+            
+            // Очищаем сетку
+            grid.innerHTML = '';
+            
+            // Проверяем доступность данных
+            let stats, currentMonth;
+            try {
+                stats = OGEEconomy ? OGEEconomy.getStats() : { crystals: 0, purchases: [], studentName: '' };
+                currentMonth = new Date().getMonth();
+            } catch (e) {
+                console.error('Ошибка получения статистики:', e);
+                stats = { crystals: 0, purchases: [], studentName: '' };
+                currentMonth = new Date().getMonth();
+            }
+            
+            // Проверяем доступность SHOP_ITEMS
+            if (typeof SHOP_ITEMS === 'undefined') {
+                grid.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">Загрузка товаров...</div>';
+                return;
+            }
+            
+            SHOP_ITEMS.forEach(item => {
+                // Считаем сколько куплено
+                const purchases = stats.purchases || [];
+                const bought = purchases.filter(
+                    p => p.itemId === item.id && p.month === currentMonth
+                ).length;
+                
+                const studentBought = purchases.filter(
+                    p => p.itemId === item.id && p.month === currentMonth && 
+                         p.studentName === stats.studentName
+                ).length;
+                
+                const isSoldOut = bought >= item.stock;
+                const isLimitReached = studentBought >= item.limitPerStudent;
+                const canAfford = (stats.crystals || 0) >= item.price;
+                
+                const card = document.createElement('div');
+                card.className = 'shop-card' + (isSoldOut ? ' sold-out' : '');
+                card.innerHTML = `
+                    <div class="shop-icon">${item.name.split(' ')[0]}</div>
+                    <div class="shop-name">${item.name.split(' ').slice(1).join(' ')}</div>
+                    <div class="shop-desc">${item.description}</div>
+                    <div class="shop-stock">Осталось: ${item.stock - bought} из ${item.stock} (ты купил: ${studentBought}/${item.limitPerStudent})</div>
+                    <div class="shop-price">💎 ${item.price}</div>
+                    <button class="buy-btn" 
+                            onclick="buyItem('${item.id}')" 
+                            ${isSoldOut || isLimitReached || !canAfford ? 'disabled' : ''}>
+                        ${isSoldOut ? 'Распродано' : isLimitReached ? 'Лимит исчерпан' : !canAfford ? 'Недостаточно 💎' : 'Купить'}
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function buyItem(itemId) {
+            if (OGEEconomy.buyItem(itemId)) {
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // АУКЦИОН
+        // ═══════════════════════════════════════════════════════════════════════
+        function renderAuction() {
+            const container = document.getElementById('auction-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            let stats, currentMonth;
+            try {
+                stats = OGEEconomy ? OGEEconomy.getStats() : { auctionBids: [], studentName: '' };
+                currentMonth = new Date().getMonth();
+            } catch (e) {
+                console.error('Ошибка получения статистики:', e);
+                stats = { auctionBids: [], studentName: '' };
+                currentMonth = new Date().getMonth();
+            }
+            
+            if (typeof AUCTION_ITEMS === 'undefined') {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">Загрузка аукциона...</div>';
+                return;
+            }
+            
+            AUCTION_ITEMS.forEach(item => {
+                // Находим текущую ставку ученика
+                const myBid = stats.auctionBids.find(
+                    b => b.itemId === item.id && b.month === currentMonth && 
+                         b.studentName === stats.studentName
+                );
+                
+                const div = document.createElement('div');
+                div.className = 'auction-item';
+                div.innerHTML = `
+                    <div class="auction-header">
+                        <div class="auction-title">${item.name}</div>
+                        <div class="auction-status">🏆 Активен</div>
+                    </div>
+                    <div class="auction-info">
+                        <div class="auction-info-item">
+                            <div class="auction-info-label">Описание</div>
+                            <div class="auction-info-value" style="font-size: 1rem; color: #333;">${item.description}</div>
+                        </div>
+                        <div class="auction-info-item">
+                            <div class="auction-info-label">Минимальная ставка</div>
+                            <div class="auction-info-value">💎 ${item.minBid}</div>
+                        </div>
+                        <div class="auction-info-item">
+                            <div class="auction-info-label">Реальная стоимость</div>
+                            <div class="auction-info-value">${item.realPrice}₽</div>
+                        </div>
+                        ${myBid ? `
+                        <div class="auction-info-item" style="background: #e8f5e9;">
+                            <div class="auction-info-label">Твоя текущая ставка</div>
+                            <div class="auction-info-value" style="color: #4caf50;">💎 ${myBid.amount}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="bid-section">
+                        <input type="number" class="bid-input" id="bid-${item.id}" 
+                               placeholder="Твоя ставка (мин. ${item.minBid})" 
+                               min="${item.minBid}">
+                        <button class="bid-btn" onclick="placeBid('${item.id}')">🤫 Сделать ставку</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function placeBid(itemId) {
+            const input = document.getElementById(`bid-${itemId}`);
+            const amount = parseInt(input.value);
+            
+            if (!amount || amount <= 0) {
+                alert('Введи сумму ставки!');
+                return;
+            }
+            
+            if (OGEEconomy.placeBid(itemId, amount)) {
+                input.value = '';
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // РЕЙТИНГ
+        // ═══════════════════════════════════════════════════════════════════════
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            
+            let stats;
+            try {
+                stats = OGEEconomy ? OGEEconomy.getStats() : { xp: 0, studentName: '' };
+            } catch (e) {
+                stats = { xp: 0, studentName: '' };
+            }
+            
+            // В реальности здесь загрузка с сервера
+            // Пока показываем только текущего ученика
+            const mockData = [
+                { name: stats.studentName || 'Ты', xp: stats.xp, isYou: true }
+            ];
+            
+            mockData.sort((a, b) => b.xp - a.xp);
+            
+            mockData.forEach((player, index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                if (player.isYou) item.style.background = '#e3f2fd';
+                
+                const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+                
+                item.innerHTML = `
+                    <div class="leaderboard-rank ${rankClass}">${index + 1}</div>
+                    <div class="leaderboard-name">${player.name} ${player.isYou ? '(ты)' : ''}</div>
+                    <div class="leaderboard-xp">⭐ ${player.xp}</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // ИСТОРИЯ
+        // ═══════════════════════════════════════════════════════════════════════
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            
+            let stats;
+            try {
+                stats = OGEEconomy ? OGEEconomy.getStats() : { purchases: [], studentName: '' };
+            } catch (e) {
+                stats = { purchases: [], studentName: '' };
+            }
+            
+            if (stats.purchases.length === 0) {
+                list.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">Пока нет покупок 💎</div>';
+                return;
+            }
+            
+            // Показываем только свои покупки
+            const myPurchases = stats.purchases.filter(p => p.studentName === stats.studentName);
+            
+            myPurchases.slice().reverse().forEach(purchase => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                
+                const date = new Date(purchase.date);
+                const dateStr = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+                
+                item.innerHTML = `
+                    <div class="history-info">
+                        <div class="history-name">${purchase.itemName}</div>
+                        <div class="history-date">${dateStr} • 💎 ${purchase.price}</div>
+                    </div>
+                    <div class="history-status ${purchase.status}">
+                        ${purchase.status === 'pending' ? '⏳ Ожидает' : '✅ Получено'}
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // ДЕЙСТВИЯ
+        // ═══════════════════════════════════════════════════════════════════════
+        function changeName() {
+            const newName = prompt('Введи своё имя:', OGEEconomy.data.studentName || '');
+            if (newName && newName.trim()) {
+                OGEEconomy.setStudentName(newName.trim());
+                location.reload();
+            }
+        }
+
+        function goToTasks() {
+            window.location.href = 'index.html';
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // МОДАЛЬНОЕ ОКНО
+        // ═══════════════════════════════════════════════════════════════════════
+        function showModal(icon, title, text) {
+            document.getElementById('modal-icon').textContent = icon;
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-text').textContent = text;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // Закрытие по клику вне
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+</body>
+</html>

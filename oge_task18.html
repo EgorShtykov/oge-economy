@@ -721,11 +721,10 @@
         <p>Сделано для учеников ❤️</p>
     </footer>
     
-    <script src="reward-system.js"></script>
+    <script src="reward-system-v2.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            RewardSystem.createProgressTracker(17);
-            RewardSystem.askStudentName();
+            OGEEconomy.askStudentName();
         });
     </script>
     <script>
@@ -744,11 +743,11 @@
             if (Math.abs(userAnswer - correctAnswer) < 0.01) {
                 result.textContent = '✅ Правильно! Молодец!';
                 result.className = 'result correct';
-                RewardSystem.rewardForTask(difficulty || 'easy', 'task18_' + id);
+                OGEEconomy.completeTask(difficulty || 'easy', true, 'task18_' + id);
             } else {
                 result.textContent = '❌ Неправильно. Попробуй ещё раз!';
                 result.className = 'result incorrect';
-                RewardSystem.penalizeWrongAnswer();
+                OGEEconomy.completeTask(difficulty || 'easy', false);
             }
         }
         
@@ -771,11 +770,11 @@
             if (isCorrect) {
                 result.textContent = '✅ Правильно! Молодец!';
                 result.className = 'result correct';
-                RewardSystem.rewardForTask(difficulty || 'easy', 'task18_' + id);
+                OGEEconomy.completeTask(difficulty || 'easy', true, 'task18_' + id);
             } else {
                 result.textContent = '❌ Неправильно. Попробуй ещё раз!';
                 result.className = 'result incorrect';
-                RewardSystem.penalizeWrongAnswer();
+                OGEEconomy.completeTask(difficulty || 'easy', false);
             }
         }
         

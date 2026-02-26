@@ -337,8 +337,7 @@
     <script>
         // Инициализация трекера прогресса
         document.addEventListener('DOMContentLoaded', function() {
-            RewardSystem.createProgressTracker(17); // Укажите общее количество задач
-            RewardSystem.askStudentName();
+            OGEEconomy.askStudentName();
         });
         
         // Проверка числовых ответов
@@ -358,16 +357,16 @@
                 result.className = 'result correct';
                 
                 // Начисляем монеты
-                if (typeof RewardSystem !== 'undefined') {
-                    RewardSystem.rewardForTask(difficulty, 'taskXX_' + id);
+                if (typeof OGEEconomy !== 'undefined') {
+                    OGEEconomy.completeTask(difficulty, true, 'taskXX_' + id);
                 }
             } else {
                 result.textContent = '❌ Неправильно. Попробуй ещё раз!';
                 result.className = 'result incorrect';
                 
                 // Штраф за неправильный ответ
-                if (typeof RewardSystem !== 'undefined') {
-                    RewardSystem.penalizeWrongAnswer();
+                if (typeof OGEEconomy !== 'undefined') {
+                    OGEEconomy.completeTask(difficulty, false);
                 }
             }
         }
