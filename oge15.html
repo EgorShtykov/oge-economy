@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>ОГЭ Задание 15 - Треугольники</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            opacity: 0.95;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: #555;
+            margin: 20px 0 10px 0;
+            font-size: 1.1rem;
+        }
+        
+        .theory-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .theory-card h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+        
+        .formula {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .problem {
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .problem-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .difficulty {
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        
+        .easy { background: #c8e6c9; color: #2e7d32; }
+        .medium { background: #fff9c4; color: #f57f17; }
+        .hard { background: #ffcdd2; color: #c62828; }
+        
+        .year {
+            color: #666;
+            font-size: 0.85rem;
+        }
+        
+        .problem-text {
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+        
+        .answer-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            -webkit-appearance: none;
+        }
+        
+        .check-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        
+        .check-btn:hover {
+            background: #5a6fd6;
+        }
+        
+        .check-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .correct {
+            background: #c8e6c9;
+            color: #2e7d32;
+            display: block;
+        }
+        
+        .incorrect {
+            background: #ffcdd2;
+            color: #c62828;
+            display: block;
+        }
+        
+        .hint-btn {
+            background: transparent;
+            border: 1px solid #667eea;
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            width: 100%;
+        }
+        
+        .hint {
+            display: none;
+            background: #e8eaf6;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .properties-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .properties-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .properties-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .trig-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+        
+        .trig-table th, .trig-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .trig-table th {
+            background: #667eea;
+            color: white;
+        }
+        
+        .trig-table tr:nth-child(even) {
+            background: #f5f5f5;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @media (max-width: 360px) {
+            .container { padding: 10px; }
+            .section { padding: 15px; }
+            .trig-table { font-size: 0.8rem; }
+            .trig-table th, .trig-table td { padding: 5px; }
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* АВАТАР ПОМОЩНИКА */
+        .tutor-character {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            z-index: 1000;
+            cursor: pointer;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+            transition: transform 0.3s;
+        }
+        .tutor-character:hover {
+            transform: scale(1.1);
+        }
+        .tutor-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .tutor-speech {
+            position: absolute;
+            bottom: 130px;
+            right: 0;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            border: 2px solid #667eea;
+            max-width: 250px;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: none;
+            animation: speechPopup 0.3s ease-out;
+        }
+        .tutor-speech::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 40px;
+            border: 10px solid transparent;
+            border-top-color: #667eea;
+        }
+        .tutor-speech.show {
+            display: block;
+        }
+        @keyframes speechPopup {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+            .tutor-character {
+                width: 80px;
+                height: 80px;
+                bottom: 10px;
+                right: 10px;
+            }
+            .tutor-avatar {
+                font-size: 40px;
+            }
+            .tutor-speech {
+                max-width: 200px;
+                font-size: 0.8rem;
+                bottom: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+<body>
+    <header>
+        <a href="index.html" style="position: absolute; top: 20px; left: 20px; color: white; text-decoration: none; font-size: 1.2rem;">🏠 Магазин</a>
+        <h1>📐 ОГЭ Задание 15</h1>
+        <p class="subtitle">Треугольники: полная теория и практика</p>
+    </header>
+    
+    <div class="container">
+        <!-- ТЕОРИЯ -->
+        <div class="section">
+            <h2>📚 Теория</h2>
+            
+            <div class="theory-card">
+                <h4>Сумма углов треугольника</h4>
+                <div class="formula">∠A + ∠B + ∠C = 180°</div>
+                <p>Сумма внутренних углов любого треугольника всегда равна 180°.</p>
+            </div>
+            
+            <div class="theory-card">
+                <h4>Внешний угол треугольника</h4>
+                <div class="formula">∠внешний = ∠A + ∠B</div>
+                <p>Внешний угол треугольника равен сумме двух внутренних не смежных с ним углов.</p>
+            </div>
+            
+            <div class="theory-card">
+                <h4>Теорема Пифагора</h4>
+                <div class="formula">a² + b² = c²</div>
+                <p>В прямоугольном треугольнике квадрат гипотенузы равен сумме квадратов катетов.</p>
+                <div class="formula">c = √(a² + b²)</div>
+            </div>
+            
+            <div class="theory-card">
+                <h4>Площадь треугольника</h4>
+                <div class="formula">S = ½ × основание × высота</div>
+                <div class="formula">S = ½ × a × b × sin(C)</div>
+                <p>Через две стороны и угол между ними.</p>
+            </div>
+            
+            <div class="theory-card">
+                <h4>Биссектриса треугольника</h4>
+                <p>Биссектриса делит угол пополам и делит противоположную сторону на отрезки, пропорциональные прилежащим сторонам:</p>
+                <div class="formula">BD/DC = AB/AC</div>
+            </div>
+            
+            <div class="theory-card">
+                <h4>Медиана треугольника</h4>
+                <p>Медиана — отрезок, соединяющий вершину с серединой противоположной стороны.</p>
+                <div class="formula">m² = (2a² + 2b² - c²)/4</div>
+                <p><strong>Важно:</strong> В прямоугольном треугольнике медиана к гипотенузе равна половине гипотенузы!</p>
+                <div class="formula">m = c/2</div>
+            </div>
+            
+            <div class="theory-card">
+                <h4>Равнобедренный треугольник</h4>
+                <ul class="properties-list">
+                    <li>Боковые стороны равны</li>
+                    <li>Углы при основании равны</li>
+                    <li>Биссектриса к основанию является высотой и медианой</li>
+                </ul>
+                <div class="formula">h² = a² - (c/2)²</div>
+                <p>где a — боковая сторона, c — основание</p>
+            </div>
+            
+            <div class="theory-card">
+                <h4>Равносторонний треугольник</h4>
+                <ul class="properties-list">
+                    <li>Все стороны равны</li>
+                    <li>Все углы по 60°</li>
+                    <li>Высота h = (a√3)/2</li>
+                </ul>
+            </div>
+            
+            <div class="theory-card">
+                <h4>Подобие треугольников</h4>
+                <p>Треугольники подобны, если их соответствующие углы равны.</p>
+                <div class="formula">Отношение площадей = k²</div>
+                <div class="formula">Отношение периметров = k</div>
+                <p>где k — коэффициент подобия</p>
+            </div>
+            
+            <div class="theory-card">
+                <h4>Тригонометрия в прямоугольном треугольнике</h4>
+                <div class="formula">sin(A) = противолежащий/гипотенуза = a/c</div>
+                <div class="formula">cos(A) = прилежащий/гипотенуза = b/c</div>
+                <div class="formula">tg(A) = противолежащий/прилежащий = a/b</div>
+            </div>
+            
+            <h3>Таблица значений</h3>
+            <table class="trig-table">
+                <tr>
+                    <th>Угол</th>
+                    <th>30°</th>
+                    <th>45°</th>
+                    <th>60°</th>
+                </tr>
+                <tr>
+                    <td>sin</td>
+                    <td>1/2</td>
+                    <td>√2/2</td>
+                    <td>√3/2</td>
+                </tr>
+                <tr>
+                    <td>cos</td>
+                    <td>√3/2</td>
+                    <td>√2/2</td>
+                    <td>1/2</td>
+                </tr>
+                <tr>
+                    <td>tg</td>
+                    <td>√3/3</td>
+                    <td>1</td>
+                    <td>√3</td>
+                </tr>
+            </table>
+            
+            <h3>Ключевые свойства</h3>
+            <ul class="properties-list">
+                <li>В треугольнике может быть только один тупой угол (>90°)</li>
+                <li>В прямоугольном треугольнике сумма острых углов равна 90°</li>
+                <li>Любая сторона треугольника меньше суммы двух других сторон</li>
+                <li>Против большего угла лежит большая сторона</li>
+                <li>Высота из прямого угла: h = (a×b)/c</li>
+            </ul>
+        </div>
+        
+        <!-- ПРАКТИКА -->
+        <div class="section">
+            <h2>✏️ Практика — Задачи из ОГЭ</h2>
+            <p style="margin-bottom: 15px; color: #666;">Все 17 задач из реальных экзаменов:</p>
+            
+            <!-- Задача 1 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">1</span>
+                    <span class="year">2023 ОГЭ</span>
+                    <span class="difficulty easy">Лёгкий</span>
+                </div>
+                <p class="problem-text">В треугольнике ABC угол A равен 45°, угол B равен 72°. Найдите угол C.</p>
+                <input type="number" class="answer-input" id="ans1" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(1, 63, 'easy')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(1)">Подсказка</button>
+                <div class="hint" id="hint1">Сумма углов треугольника = 180°. ∠C = 180° - 45° - 72° = 63°</div>
+                <div class="result" id="result1"></div>
+            </div>
+            
+            <!-- Задача 2 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">2</span>
+                    <span class="year">2022 ОГЭ</span>
+                    <span class="difficulty medium">Средний</span>
+                </div>
+                <p class="problem-text">В треугольнике ABC угол A равен 38°, внешний угол при вершине B равен 96°. Найдите угол C.</p>
+                <input type="number" class="answer-input" id="ans2" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(2, 58, 'medium')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(2)">Подсказка</button>
+                <div class="hint" id="hint2">Внутренний угол B = 180° - 96° = 84°. Затем ∠C = 180° - 38° - 84° = 58°</div>
+                <div class="result" id="result2"></div>
+            </div>
+            
+            <!-- Задача 3 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">3</span>
+                    <span class="year">2023 ОГЭ</span>
+                    <span class="difficulty easy">Лёгкий</span>
+                </div>
+                <p class="problem-text">В треугольнике ABC угол BAC равен 74°, AD — биссектриса. Найдите угол BAD.</p>
+                <input type="number" class="answer-input" id="ans3" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(3, 37, 'easy')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(3)">Подсказка</button>
+                <div class="hint" id="hint3">Биссектриса делит угол пополам. 74° ÷ 2 = 37°</div>
+                <div class="result" id="result3"></div>
+            </div>
+            
+            <!-- Задача 4 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">4</span>
+                    <span class="year">2020 ОГЭ</span>
+                    <span class="difficulty medium">Средний</span>
+                </div>
+                <p class="problem-text">В треугольнике ABC AC = BC. Внешний угол при вершине B равен 122°. Найдите угол C.</p>
+                <input type="number" class="answer-input" id="ans4" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(4, 64, 'medium')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(4)">Подсказка</button>
+                <div class="hint" id="hint4">Треугольник равнобедренный (AC=BC), значит ∠A = ∠B. Внутренний угол B = 180° - 122° = 58°. ∠C = 180° - 2×58° = 64°</div>
+                <div class="result" id="result4"></div>
+            </div>
+            
+            <!-- Задача 5 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">5</span>
+                    <span class="year">2023 ОГЭ</span>
+                    <span class="difficulty easy">Лёгкий</span>
+                </div>
+                <p class="problem-text">Два катета прямоугольного треугольника равны 9 и 12. Найдите площадь этого треугольника.</p>
+                <input type="number" class="answer-input" id="ans5" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(5, 54, 'easy')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(5)">Подсказка</button>
+                <div class="hint" id="hint5">S = ½ × 9 × 12 = 54</div>
+                <div class="result" id="result5"></div>
+            </div>
+            
+            <!-- Задача 6 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">6</span>
+                    <span class="year">2022 ОГЭ</span>
+                    <span class="difficulty easy">Лёгкий</span>
+                </div>
+                <p class="problem-text">Основание треугольника равно 18, а высота, проведённая к этому основанию, равна 7. Найдите площадь треугольника.</p>
+                <input type="number" class="answer-input" id="ans6" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(6, 63, 'easy')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(6)">Подсказка</button>
+                <div class="hint" id="hint6">S = ½ × 18 × 7 = 63</div>
+                <div class="result" id="result6"></div>
+            </div>
+            
+            <!-- Задача 7 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">7</span>
+                    <span class="year">2023 ОГЭ</span>
+                    <span class="difficulty easy">Лёгкий</span>
+                </div>
+                <p class="problem-text">Катеты прямоугольного треугольника равны 20 и 21. Найдите гипотенузу этого треугольника.</p>
+                <input type="number" class="answer-input" id="ans7" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(7, 29, 'easy')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(7)">Подсказка</button>
+                <div class="hint" id="hint7">c² = 20² + 21² = 400 + 441 = 841. c = √841 = 29</div>
+                <div class="result" id="result7"></div>
+            </div>
+            
+            <!-- Задача 8 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">8</span>
+                    <span class="year">2022 ОГЭ</span>
+                    <span class="difficulty easy">Лёгкий</span>
+                </div>
+                <p class="problem-text">В прямоугольном треугольнике один катет равен 15, а гипотенуза равна 17. Найдите другой катет.</p>
+                <input type="number" class="answer-input" id="ans8" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(8, 8, 'easy')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(8)">Подсказка</button>
+                <div class="hint" id="hint8">b² = c² - a² = 17² - 15² = 289 - 225 = 64. b = 8</div>
+                <div class="result" id="result8"></div>
+            </div>
+            
+            <!-- Задача 9 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">9</span>
+                    <span class="year">2021 ОГЭ</span>
+                    <span class="difficulty medium">Средний</span>
+                </div>
+                <p class="problem-text">В равнобедренном треугольнике боковая сторона равна 25, а основание равно 14. Найдите высоту, проведённую к основанию.</p>
+                <input type="number" class="answer-input" id="ans9" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(9, 24, 'medium')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(9)">Подсказка</button>
+                <div class="hint" id="hint9">h² = 25² - 7² = 625 - 49 = 576. h = 24 (египетский треугольник 7-24-25)</div>
+                <div class="result" id="result9"></div>
+            </div>
+            
+            <!-- Задача 10 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">10</span>
+                    <span class="year">2023 ОГЭ</span>
+                    <span class="difficulty easy">Лёгкий</span>
+                </div>
+                <p class="problem-text">В треугольнике ABC угол C равен 90°, AC = 8, AB = 10. Найдите sin B.</p>
+                <input type="text" class="answer-input" id="ans10" placeholder="Введите ответ (дробь, например: 3/5)">
+                <button class="check-btn" onclick="checkFraction(10, '4/5', '0.8', 'easy')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(10)">Подсказка</button>
+                <div class="hint" id="hint10">sin B = AC/AB = 8/10 = 4/5 = 0.8</div>
+                <div class="result" id="result10"></div>
+            </div>
+            
+            <!-- Задача 11 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">11</span>
+                    <span class="year">2022 ОГЭ</span>
+                    <span class="difficulty medium">Средний</span>
+                </div>
+                <p class="problem-text">В треугольнике ABC угол C равен 90°, BC = 14, AB = 50. Найдите cos B.</p>
+                <input type="text" class="answer-input" id="ans11" placeholder="Введите ответ (дробь)">
+                <button class="check-btn" onclick="checkFraction(11, '7/25', '0.28', 'medium')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(11)">Подсказка</button>
+                <div class="hint" id="hint11">Сначала найдём AC: AC² = 50² - 14² = 2500 - 196 = 2304, AC = 48. cos B = BC/AB = 14/50 = 7/25 = 0.28</div>
+                <div class="result" id="result11"></div>
+            </div>
+            
+            <!-- Задача 12 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">12</span>
+                    <span class="year">2021 ОГЭ</span>
+                    <span class="difficulty medium">Средний</span>
+                </div>
+                <p class="problem-text">В треугольнике ABC угол C равен 90°, tg A = 3/4, AC = 16. Найдите BC.</p>
+                <input type="number" class="answer-input" id="ans12" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(12, 12, 'medium')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(12)">Подсказка</button>
+                <div class="hint" id="hint12">tg A = BC/AC. Значит BC = AC × tg A = 16 × 3/4 = 12</div>
+                <div class="result" id="result12"></div>
+            </div>
+            
+            <!-- Задача 13 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">13</span>
+                    <span class="year">2023 ОГЭ</span>
+                    <span class="difficulty easy">Лёгкий</span>
+                </div>
+                <p class="problem-text">В равнобедренном треугольнике ABC с основанием AC угол B равен 56°. Найдите угол BAC.</p>
+                <input type="number" class="answer-input" id="ans13" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(13, 62, 'easy')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(13)">Подсказка</button>
+                <div class="hint" id="hint13">Углы при основании равны: ∠BAC = ∠BCA = (180° - 56°)/2 = 62°</div>
+                <div class="result" id="result13"></div>
+            </div>
+            
+            <!-- Задача 14 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">14</span>
+                    <span class="year">2022 ОГЭ</span>
+                    <span class="difficulty easy">Лёгкий</span>
+                </div>
+                <p class="problem-text">Периметр равнобедренного треугольника равен 100, а основание равно 36. Найдите боковую сторону.</p>
+                <input type="number" class="answer-input" id="ans14" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(14, 32, 'easy')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(14)">Подсказка</button>
+                <div class="hint" id="hint14">P = 2a + c. 100 = 2a + 36. 2a = 64. a = 32</div>
+                <div class="result" id="result14"></div>
+            </div>
+            
+            <!-- Задача 15 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">15</span>
+                    <span class="year">2023 ОГЭ</span>
+                    <span class="difficulty medium">Средний</span>
+                </div>
+                <p class="problem-text">Площади двух подобных треугольников относятся как 16:25. Найдите отношение их периметров.</p>
+                <input type="text" class="answer-input" id="ans15" placeholder="Введите ответ (например: 4/5)">
+                <button class="check-btn" onclick="checkFraction(15, '4/5', '0.8', 'medium')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(15)">Подсказка</button>
+                <div class="hint" id="hint15">Отношение площадей = k² = 16/25. Значит k = 4/5. Отношение периметров = k = 4/5</div>
+                <div class="result" id="result15"></div>
+            </div>
+            
+            <!-- Задача 16 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">16</span>
+                    <span class="year">2023 ОГЭ</span>
+                    <span class="difficulty easy">Лёгкий</span>
+                </div>
+                <p class="problem-text">В прямоугольном треугольнике гипотенуза равна 26. Найдите медиану, проведённую к гипотенузе.</p>
+                <input type="number" class="answer-input" id="ans16" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(16, 13, 'easy')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(16)">Подсказка</button>
+                <div class="hint" id="hint16">Медиана к гипотенузе равна половине гипотенузы! m = 26/2 = 13</div>
+                <div class="result" id="result16"></div>
+            </div>
+            
+            <!-- Задача 17 -->
+            <div class="problem">
+                <div class="problem-header">
+                    <span class="problem-number">17</span>
+                    <span class="year">2021 ОГЭ</span>
+                    <span class="difficulty medium">Средний</span>
+                </div>
+                <p class="problem-text">В прямоугольном треугольнике катеты равны 12 и 16. Найдите медиану, проведённую к гипотенузе.</p>
+                <input type="number" class="answer-input" id="ans17" placeholder="Введите ответ">
+                <button class="check-btn" onclick="checkAnswer(17, 10, 'medium')">Проверить</button>
+                <button class="hint-btn" onclick="toggleHint(17)">Подсказка</button>
+                <div class="hint" id="hint17">Сначала найдём гипотенузу: c² = 12² + 16² = 144 + 256 = 400, c = 20. Медиана = c/2 = 10</div>
+                <div class="result" id="result17"></div>
+            </div>
+        </div>
+        
+        <!-- СОВЕТЫ -->
+        <div class="section">
+            <h2>💡 Советы по подготовке к ОГЭ</h2>
+            <ul class="properties-list">
+                <li>Решайте по 5-10 задач каждый день</li>
+                <li>Начинайте с простых задач, постепенно усложняйте</li>
+                <li>Запомните основные формулы наизусть</li>
+                <li>Обратите внимание на "пифагоровы тройки": 3-4-5, 5-12-13, 8-15-17, 7-24-25</li>
+                <li>Проверяйте ответы с помощью обратных действий</li>
+                <li>Разбирайте ошибки, чтобы не повторять их</li>
+                <li>На экзамене сначала решайте задачи на нахождение углов — они проще</li>
+            </ul>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2026 ОГЭ Задание 15. Образовательный ресурс.</p>
+        <p>Сделано для учеников ❤️</p>
+    </footer>
+    
+    <script src="reward-system-v2.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            OGEEconomy.askStudentName();
+        });
+    </script>
+    <script>
+        // Определить сложность задачи по классу элемента
+        function getDifficulty(id) {
+            const input = document.getElementById('ans' + id);
+            if (!input) return 'easy';
+            const problemEl = input.closest('.problem');
+            if (problemEl) {
+                if (problemEl.querySelector('.difficulty.hard')) return 'hard';
+                if (problemEl.querySelector('.difficulty.medium')) return 'medium';
+            }
+            return 'easy';
+        }
+
+        //
+        function checkAnswer(id, correctAnswer, difficulty) {
+            const input = document.getElementById('ans' + id);
+            const result = document.getElementById('result' + id);
+            const userAnswer = parseFloat(input.value);
+            
+            if (isNaN(userAnswer)) {
+                result.textContent = '⚠️ Введите число';
+                result.className = 'result incorrect';
+                return;
+            }
+            
+            if (Math.abs(userAnswer - correctAnswer) < 0.01) {
+                result.textContent = '✅ Правильно! Молодец!';
+                result.className = 'result correct';
+                // Начисляем награду за правильный ответ
+                if (typeof OGEEconomy !== 'undefined') {
+                    OGEEconomy.completeTask((difficulty || getDifficulty(id)), true, 'task15_' + id);
+                }
+            } else {
+                result.textContent = '❌ Неправильно. Попробуй ещё раз!';
+                result.className = 'result incorrect';
+                // Штраф за неправильный ответ
+                if (typeof OGEEconomy !== 'undefined') {
+                    OGEEconomy.completeTask((difficulty || getDifficulty(id)), false);
+                }
+            }
+        }
+        
+        // Проверка дробных ответов (для тригонометрии)
+        function checkFraction(id, correctFraction, correctDecimal, difficulty) {
+            const input = document.getElementById('ans' + id);
+            const result = document.getElementById('result' + id);
+            const userAnswer = input.value.trim().replace(',', '.');
+            
+            if (!userAnswer) {
+                result.textContent = '⚠️ Введите ответ';
+                result.className = 'result incorrect';
+                return;
+            }
+            
+            // Проверяем как дробь (4/5) или как десятичное (0.8)
+            const normalized = userAnswer.replace(/\s/g, '');
+            const isCorrect = normalized === correctFraction || 
+                             normalized === correctDecimal ||
+                             Math.abs(parseFloat(userAnswer) - parseFloat(correctDecimal)) < 0.01;
+            
+            if (isCorrect) {
+                result.textContent = '✅ Правильно! Молодец!';
+                result.className = 'result correct';
+                // Начисляем награду за правильный ответ
+                if (typeof OGEEconomy !== 'undefined') {
+                    OGEEconomy.completeTask((difficulty || getDifficulty(id)), true, 'task15_' + id);
+                }
+            } else {
+                result.textContent = '❌ Неправильно. Попробуй ещё раз!';
+                result.className = 'result incorrect';
+                // Штраф за неправильный ответ
+                if (typeof OGEEconomy !== 'undefined') {
+                    OGEEconomy.completeTask((difficulty || getDifficulty(id)), false);
+                }
+            }
+        }
+        
+        // Показать/скрыть подсказку
+        
+        // Обработка Enter
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.answer-input');
+            inputs.forEach(function(input) {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const btn = this.nextElementSibling;
+                        if (btn && btn.classList.contains('check-btn')) {
+                            btn.click();
+                        }
+                    }
+                });
+            });
+        })    
+    <!-- АВАТАР ПОМОЩНИКА -->
+    <div class="tutor-character" onclick="toggleTutorSpeech()">
+        <div class="tutor-speech" id="tutor-speech">
+            👋 Привет! Я твой помощник! Нажми "Подсказка" в задаче, если застрял. Но помни: с подсказкой награда будет меньше!
+        </div>
+        <div class="tutor-avatar">🧑‍🏫</div>
+    </div>
+    
+    <script>
+        // Показать/скрыть речь аватара
+        function toggleTutorSpeech() {
+            const speech = document.getElementById('tutor-speech');
+            speech.classList.toggle('show');
+        }
+        
+        // Обновленная функция подсказки
+        }
+    </script>
+</body>
+</html>
