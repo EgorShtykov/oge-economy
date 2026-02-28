@@ -27,43 +27,43 @@ window.currentStudent = null;
 
 // Проверка авторизации при загрузке
 auth.onAuthStateChanged(async (user) => {
-  console.log('Статус:', user ? 'Вошел' : 'Не вошел');
+  console.log('Статус авторизации:', user ? 'Вошел' : 'Не вошел');
   
   if (user) {
-    // Ученик уже вошел
     const studentRef = db.collection('students').doc(user.uid);
     const doc = await studentRef.get();
     
     if (doc.exists) {
       window.currentStudent = { id: user.uid, ...doc.data() };
-      updateCrystalDisplay(window.currentStudent.crystals || 0);
+      
+      // !!! ВАЖНО: Обновляем UI с данными из Firebase !!!
+      const firebaseCrystals = window.currentStudent.crystals || 0;
+      document.getElementById('crystals').textContent = firebaseCrystals;
+      
+      // Скрываем модалку
+      const modal = document.getElementById('auth-modal');
+      if (modal) modal.style.display = 'none';
+      
+      console.log('Загружено из Firebase:', firebaseCrystals, 'кристаллов');
     } else {
-      // Первый вход - создаем профиль
+      // Создаем новый профиль
+      const localCrystals = parseInt(localStorage.getItem('crystals') || 0);
       await studentRef.set({
-        phone: user.phoneNumber,
-        crystals: parseInt(localStorage.getItem('crystals') || 0),
+        phone: user.phoneNumber || 'anonymous',
+        crystals: localCrystals,
         xp: 0,
         streak: 0,
         lastVisit: firebase.firestore.FieldValue.serverTimestamp(),
         sitesVisited: ['economy']
       });
-      window.currentStudent = { id: user.uid, crystals: 0 };
+      window.currentStudent = { id: user.uid, crystals: localCrystals };
+      document.getElementById('crystals').textContent = localCrystals;
     }
-    
-    // Скрываем модалку если была показана
-    const modal = document.getElementById('auth-modal');
-    if (modal) modal.style.display = 'none';
-    
   } else {
     // Не авторизован - показываем окно входа
-    // Ждем пока загрузится DOM
     setTimeout(() => {
       const modal = document.getElementById('auth-modal');
-      if (modal) {
-        modal.style.display = 'flex';
-      } else {
-        console.error('Модальное окно не найдено в DOM');
-      }
+      if (modal) modal.style.display = 'flex';
     }, 100);
   }
 });
