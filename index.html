@@ -1,6 +1,109 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script>
+// Твоя конфигурация (из Firebase Console)
+const firebaseConfig = {
+  apiKey: "AIzaSyCd8k0YuzolJV1-SU5KghkgsET_rU3yH9s",
+  authDomain: "egor-20d85.firebaseapp.com",
+  projectId: "egor-20d85",
+  storageBucket: "egor-20d85.firebasestorage.app",
+  messagingSenderId: "879206703089",
+  appId: "1:879206703089:web:2d0b4659b61502c4c56e50",
+  measurementId: "G-JKVVLLQSCP"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Глобальная переменная для текущего ученика
+window.currentStudent = null;
+
+// Проверка авторизации при загрузке
+auth.onAuthStateChanged(async (user) => {
+  console.log('Статус:', user ? 'Вошел' : 'Не вошел');
+  
+  if (user) {
+    // Ученик уже вошел
+    const studentRef = db.collection('students').doc(user.uid);
+    const doc = await studentRef.get();
+    
+    if (doc.exists) {
+      window.currentStudent = { id: user.uid, ...doc.data() };
+      updateCrystalDisplay(window.currentStudent.crystals || 0);
+    } else {
+      // Первый вход - создаем профиль
+      await studentRef.set({
+        phone: user.phoneNumber,
+        crystals: parseInt(localStorage.getItem('crystals') || 0),
+        xp: 0,
+        streak: 0,
+        lastVisit: firebase.firestore.FieldValue.serverTimestamp(),
+        sitesVisited: ['economy']
+      });
+      window.currentStudent = { id: user.uid, crystals: 0 };
+    }
+    
+    // Скрываем модалку если была показана
+    const modal = document.getElementById('auth-modal');
+    if (modal) modal.style.display = 'none';
+    
+  } else {
+    // Не авторизован - показываем окно входа
+    // Ждем пока загрузится DOM
+    setTimeout(() => {
+      const modal = document.getElementById('auth-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+      } else {
+        console.error('Модальное окно не найдено в DOM');
+      }
+    }, 100);
+  }
+});
+
+// Функция обновления отображения кристаллов (заменит твою текущую)
+function updateCrystalDisplay(count) {
+  // Ищем элемент где у тебя сейчас показываются кристаллы
+  const display = document.querySelector('.crystal-count') || document.getElementById('crystal-count');
+  if (display) display.textContent = count;
+  
+  // Если используешь localStorage сейчас - заменяем на Firebase
+  localStorage.setItem('crystals_temp', count); // Для совместимости со старым кодом
+}
+
+// Начисление кристаллов (вызови эту функцию вместо локального добавления)
+async function addCrystals(amount, reason) {
+  if (!window.currentStudent) return;
+  
+  const studentRef = db.collection('students').doc(window.currentStudent.id);
+  
+  await studentRef.update({
+    crystals: firebase.firestore.FieldValue.increment(amount),
+    history: firebase.firestore.FieldValue.arrayUnion({
+      amount: amount,
+      reason: reason,
+      site: 'economy',
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+  });
+  
+  // Обновляем локально для быстрого отображения
+  window.currentStudent.crystals += amount;
+  updateCrystalDisplay(window.currentStudent.crystals);
+  
+  // Показываем уведомление (если есть на сайте)
+  if (typeof showNotification === 'function') {
+    showNotification(`+${amount} кристаллов!`);
+  }
+}
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>🎮 ОГЭ Экономика | Зарабатывай кристаллы!</title>
@@ -506,5 +609,90 @@
             }
         }
     </script>
+
+<!-- Модальное окно входа (появляется если не авторизован) -->
+<div id="auth-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+     background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
+  
+  <div style="background:white; padding:40px; border-radius:20px; max-width:400px; text-align:center;">
+    <h2 style="color:#6b4ee6; margin-bottom:20px;">💎 Вход в систему кристаллов</h2>
+    <p style="margin-bottom:20px; color:#666;">Введи номер телефона, чтобы сохранять прогресс и трать кристаллы в магазине</p>
+    
+    <input type="tel" id="phone-input" placeholder="+7 (999) 123-45-67" 
+           style="width:100%; padding:15px; font-size:16px; border:2px solid #6b4ee6; border-radius:10px; margin-bottom:15px;">
+    
+    <button onclick="sendCode()" 
+            style="width:100%; padding:15px; background:#6b4ee6; color:white; border:none; border-radius:10px; font-size:16px; cursor:pointer;">
+      Получить код SMS
+    </button>
+    
+    <div id="code-section" style="display:none; margin-top:20px;">
+      <input type="text" id="code-input" placeholder="Код из SMS" 
+             style="width:100%; padding:15px; font-size:16px; border:2px solid #6b4ee6; border-radius:10px; margin-bottom:15px;">
+      <button onclick="verifyCode()" 
+              style="width:100%; padding:15px; background:#4CAF50; color:white; border:none; border-radius:10px; font-size:16px; cursor:pointer;">
+        Войти
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Функция для тестового входа без reCAPTCHA
+window.sendCode = function() {
+  let phone = document.getElementById('phone-input').value.trim();
+  phone = phone.replace(/[^\d+]/g, '');
+  
+  if (phone !== '+79990000000') {
+    alert('Пока только тестовый номер: +79990000000');
+    return;
+  }
+  
+  // Создаем "фейковый" verifier с ВСЕМИ необходимыми методами
+  const appVerifier = {
+    type: 'recaptcha',
+    verify: function() {
+      return Promise.resolve('test-token');
+    },
+    reset: function() {},
+    _reset: function() {}, // Firebase использует это внутренне!
+    clear: function() {},
+    render: function() {
+      return Promise.resolve(1);
+    }
+  };
+  
+  firebase.auth().signInWithPhoneNumber(phone, appVerifier)
+    .then((confirmationResult) => {
+      window.confirmationResult = confirmationResult;
+      document.getElementById('code-section').style.display = 'block';
+      document.querySelector('button[onclick="sendCode()"]').style.display = 'none';
+      alert('✅ Код отправлен!\nВведи: 123456');
+    })
+    .catch((error) => {
+      console.error('Ошибка:', error);
+      alert('Ошибка: ' + error.message);
+    });
+};
+
+window.verifyCode = function() {
+  const code = document.getElementById('code-input').value;
+  
+  if (!window.confirmationResult) {
+    alert('Сначала запроси код');
+    return;
+  }
+  
+  window.confirmationResult.confirm(code)
+    .then((result) => {
+      console.log('✅ Успешный вход:', result.user.phoneNumber);
+      document.getElementById('auth-modal').style.display = 'none';
+      alert('Вход выполнен!');
+    })
+    .catch((error) => {
+      alert('❌ Неверный код');
+    });
+};
+</script>
 </body>
 </html>
