@@ -22,7 +22,6 @@
   <div id="students-list">Загрузка...</div>
 
 <script>
-// Тот же конфиг
 const firebaseConfig = {
   apiKey: "AIzaSyCd8k0YuzolJV1-SU5KghkgsET_rU3yH9s",
   authDomain: "egor-20d85.firebaseapp.com",
@@ -31,54 +30,66 @@ const firebaseConfig = {
   messagingSenderId: "879206703089",
   appId: "1:879206703089:web:2d0b4659b61502c4c56e50"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const auth = firebase.auth();
 
-// Защита простым паролем (можно убрать после настройки)
-if (!localStorage.getItem('admin_auth')) {
-  const pass = prompt('Пароль администратора:');
-  if (pass !== 'Pa00words') {
-    document.body.innerHTML = '<h1>Доступ запрещен</h1>';
-    throw new Error('No access');
-  }
-  localStorage.setItem('admin_auth', 'true');
-}
-
-// Загрузка учеников в реальном времени
-db.collection('students').orderBy('lastVisit', 'desc').onSnapshot(snapshot => {
-  const container = document.getElementById('students-list');
-  container.innerHTML = '';
-  
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    const div = document.createElement('div');
-    div.className = 'student-card';
-    div.innerHTML = `
-      <div>
-        <div style="font-size:18px; font-weight:bold;">${data.phone || 'Без имени'}</div>
-        <div class="phone">ID: ${doc.id.substr(0, 8)}...</div>
-        <div class="last-active">Последняя активность: ${data.lastVisit?.toDate().toLocaleString() || 'Нет'}</div>
-      </div>
-      <div style="display:flex; align-items:center; gap:10px;">
-        <span class="crystals">${data.crystals || 0} 💎</span>
-        <input type="number" id="amt-${doc.id}" value="10" style="width:70px;">
-        <button class="add" onclick="updateCrystals('${doc.id}', 1)">+</button>
-        <button class="remove" onclick="updateCrystals('${doc.id}', -1)">-</button>
-      </div>
-    `;
-    container.appendChild(div);
-  });
+// Анонимный вход для админки (временно)
+auth.signInAnonymously().then(() => {
+  console.log('Вошел как админ');
+  loadStudents();
+}).catch(e => {
+  console.error('Ошибка входа:', e);
+  document.getElementById('students-list').innerHTML = '<p style="color:red;">Ошибка авторизации</p>';
 });
 
-async function updateCrystals(studentId, multiplier) {
-  const amount = parseInt(document.getElementById(`amt-${studentId}`).value) * multiplier;
-  await db.collection('students').doc(studentId).update({
-    crystals: firebase.firestore.FieldValue.increment(amount)
+function loadStudents() {
+  db.collection('students').get()
+    .then(snapshot => {
+      const container = document.getElementById('students-list');
+      container.innerHTML = '';
+      
+      if (snapshot.empty) {
+        container.innerHTML = '<p>Нет учеников</p>';
+        return;
+      }
+      
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement('div');
+        div.className = 'student-card';
+        div.innerHTML = `
+          <div>
+            <div style="font-size:18px; font-weight:bold;">${data.phone || 'Аноним'}</div>
+            <div style="font-size:12px; color:#666;">Кристаллы: ${data.crystals || 0}</div>
+          </div>
+          <div>
+            <input type="number" id="amt-${doc.id}" value="10" style="width:60px;">
+            <button class="add" onclick="updateCrystals('${doc.id}', 1)">+</button>
+            <button class="remove" onclick="updateCrystals('${doc.id}', -1)">-</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    })
+    .catch(error => {
+      console.error(error);
+      document.getElementById('students-list').innerHTML = '<p style="color:red;">' + error.message + '</p>';
+    });
+}
+
+async function updateCrystals(id, mult) {
+  const amt = parseInt(document.getElementById(`amt-${id}`).value) * mult;
+  await db.collection('students').doc(id).update({
+    crystals: firebase.firestore.FieldValue.increment(amt)
   });
-  alert(multiplier > 0 ? `Добавлено ${amount} 💎` : `Снято ${Math.abs(amount)} 💎`);
+  alert(mult > 0 ? `+${amt} 💎` : `-${Math.abs(amt)} 💎`);
+  loadStudents(); // Перезагружаем список
 }
 </script>
 </body>
 
 </html>
+
 
