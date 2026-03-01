@@ -830,36 +830,7 @@
                 }
             });
         }
-
-        // Загрузка данных пользователя из Firestore
-        async function loadUserData(user) {
-            try {
-                const userRef = db.collection('students').doc(user.uid);
-                const doc = await userRef.get();
                 
-                if (doc.exists) {
-                    // Существующий пользователь
-                    window.currentStudent = { id: user.uid, ...doc.data() };
-                    console.log('Загружены данные:', window.currentStudent);
-                } else {
-                    // Новый пользователь - создаем профиль
-                    const newUser = {
-                        phone: user.phoneNumber,
-                        crystals: 0,
-                        xp: 0,
-                        streak: 0,
-                        lastVisit: firebase.firestore.FieldValue.serverTimestamp(),
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        sitesVisited: ['economy'],
-                        name: ''
-                    };
-                    
-                    await userRef.set(newUser);
-                    window.currentStudent = { id: user.uid, ...newUser };
-                    console.log('Создан новый профиль');
-                }
-                
-                // Обновляем UI
                 updateUI();
                 showUserProfile(user.phoneNumber);
                 
@@ -882,15 +853,60 @@
         }
 
         // Показать профиль в шапке
-        function showUserProfile(phone) {
-            const profile = document.getElementById('user-profile');
-            const phoneElement = document.getElementById('user-phone');
+        // Показать профиль в шапке (ИСПРАВЛЕННАЯ)
+function showUserProfile(phone) {
+    const profile = document.getElementById('user-profile');
+    const phoneElement = document.getElementById('user-phone');
+    
+    if (!phone) {
+        phone = 'Гость'; // Fallback если нет номера
+    }
+    
+    // Форматируем номер для отображения (только если это похоже на телефон)
+    let displayText = phone;
+    if (phone.startsWith('+7') && phone.length === 12) {
+        displayText = phone.replace(/(\+7)(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 ($2) $3-$4-$5');
+    }
+    
+    phoneElement.textContent = displayText;
+    profile.style.display = 'flex';
+}
+
+// Загрузка данных (ИСПРАВЛЕННАЯ)
+async function loadUserData(user) {
+    try {
+        console.log('Загрузка данных для:', user.uid, 'телефон:', user.phoneNumber);
+        
+        const userRef = db.collection('students').doc(user.uid);
+        const doc = await userRef.get();
+        
+        if (doc.exists) {
+            window.currentStudent = { id: user.uid, ...doc.data() };
+        } else {
+            // Новый пользователь
+            const newUser = {
+                phone: user.phoneNumber || user.email || 'unknown',
+                crystals: 0,
+                xp: 0,
+                streak: 0,
+                lastVisit: firebase.firestore.FieldValue.serverTimestamp(),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                sitesVisited: ['economy'],
+                name: ''
+            };
             
-            // Форматируем номер для отображения
-            const formattedPhone = phone.replace(/(\+7)(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 ($2) $3-$4-$5');
-            phoneElement.textContent = formattedPhone;
-            profile.style.display = 'flex';
+            await userRef.set(newUser);
+            window.currentStudent = { id: user.uid, ...newUser };
         }
+        
+        // Обновляем UI
+        updateUI();
+        showUserProfile(user.phoneNumber || user.email); // Передаем phone или email
+        
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+    }
+}
 
         // ==================== ФУНКЦИИ ВХОДА ====================
 
