@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>🎮 ОГЭ Экономика | Зарабатывай кристаллы!</title>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
     <style>
@@ -331,7 +330,7 @@
             margin-bottom: 10px;
         }
         
-        /* МОДАЛЬНОЕ ОКНО */
+        /* МОДАЛЬНОЕ ОКНО ВХОДА (УПРОЩЁННОЕ) */
         #auth-modal {
             display: none;
             position: fixed;
@@ -354,6 +353,12 @@
             width: 90%;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .auth-container h2 {
@@ -368,18 +373,19 @@
             font-size: 1rem;
         }
         
-        .phone-input-wrapper {
-            position: relative;
-            margin-bottom: 20px;
-        }
-        
-        .phone-input-wrapper input {
+        .auth-container input {
             width: 100%;
             padding: 15px;
             font-size: 18px;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
             text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .auth-container input:focus {
+            outline: none;
+            border-color: #667eea;
         }
         
         .auth-btn {
@@ -397,50 +403,7 @@
         
         .auth-btn:hover {
             transform: translateY(-2px);
-        }
-        
-        .code-section {
-            display: none;
-            margin-top: 20px;
-        }
-        
-        .code-input {
-            width: 100%;
-            padding: 15px;
-            font-size: 24px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            text-align: center;
-            letter-spacing: 5px;
-            margin-bottom: 15px;
-        }
-        
-        .verify-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .back-btn {
-            margin-top: 15px;
-            background: none;
-            border: none;
-            color: #999;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .error-message {
-            color: #f44336;
-            font-size: 14px;
-            margin-top: 10px;
-            display: none;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
         
         /* АДАПТИВНОСТЬ */
@@ -629,33 +592,23 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ВХОДА -->
+    <!-- МОДАЛЬНОЕ ОКНО ВХОДА (УПРОЩЁННОЕ) -->
     <div id="auth-modal">
         <div class="auth-container">
             <h2>💎 Вход в систему</h2>
-            <p class="subtitle">Введи номер телефона, чтобы сохранять прогресс</p>
+            <p class="subtitle">Введи номер телефона, чтобы сохранять прогресс и копить кристаллы</p>
             
-            <div id="phone-section">
-                <div class="phone-input-wrapper">
-                    <input type="tel" id="phone-input" placeholder="+7 (999) 123-45-67" maxlength="18">
-                </div>
-                <div id="recaptcha-container"></div>
-                <button class="auth-btn" onclick="sendCode()">Получить код SMS</button>
-                <div class="error-message" id="phone-error"></div>
-            </div>
+            <input type="tel" id="phone-input" placeholder="+7 (999) 123-45-67" maxlength="18">
+            <button class="auth-btn" onclick="login()">Войти</button>
             
-            <div id="code-section" class="code-section">
-                <p style="margin-bottom: 10px; color: #666; font-size: 14px;">Введи код из SMS</p>
-                <input type="text" id="code-input" class="code-input" placeholder="000000" maxlength="6">
-                <button class="verify-btn" onclick="verifyCode()">Подтвердить</button>
-                <div class="error-message" id="code-error"></div>
-                <button class="back-btn" onclick="backToPhone()">Изменить номер</button>
+            <div style="margin-top: 15px; font-size: 14px; color: #999;">
+                На этот номер телефона будут привязаны твои кристаллы
             </div>
         </div>
     </div>
 
     <script>
-        // Firebase конфигурация
+        // Firebase конфигурация (только Firestore, без Auth)
         const firebaseConfig = {
             apiKey: "AIzaSyCd8k0YuzolJV1-SU5KghkgsET_rU3yH9s",
             authDomain: "egor-20d85.firebaseapp.com",
@@ -667,28 +620,25 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const db = firebase.firestore();
 
-        let confirmationResult = null;
-        let recaptchaVerifier = null;
         let currentStudent = null;
+        let currentPhone = null;
 
-        // Инициализация
+        // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', function() {
-            initRecaptcha();
+            // Проверяем, есть ли сохранённый номер
+            const savedPhone = localStorage.getItem('studentPhone');
             
-            auth.onAuthStateChanged(async (user) => {
-                if (user) {
-                    console.log('Вошел:', user.phoneNumber);
-                    await loadUserData(user);
-                    showUserProfile(user.phoneNumber);
-                } else {
-                    document.getElementById('auth-modal').style.display = 'flex';
-                }
-            });
+            if (savedPhone) {
+                // Автовход по сохранённому номеру
+                loadUserData(savedPhone);
+            } else {
+                // Показываем окно входа
+                document.getElementById('auth-modal').style.display = 'flex';
+            }
 
-            // Форматирование телефона
+            // Форматирование телефона при вводе
             document.getElementById('phone-input').addEventListener('input', function(e) {
                 let val = e.target.value.replace(/\D/g, '');
                 if (val.startsWith('7') || val.startsWith('8')) val = val.slice(1);
@@ -701,43 +651,64 @@
             });
         });
 
-        function initRecaptcha() {
-            if (!recaptchaVerifier) {
-                recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-                    'size': 'invisible'
-                });
-                recaptchaVerifier.render();
+        // Вход (упрощённый, без SMS)
+        async function login() {
+            const phoneInput = document.getElementById('phone-input');
+            const phone = phoneInput.value.replace(/[()\s-]/g, '');
+            
+            // Проверка формата
+            if (!phone.match(/^\+7\d{10}$/)) {
+                alert('Введи корректный номер телефона в формате +7XXXXXXXXXX');
+                return;
             }
+
+            // Сохраняем номер и загружаем данные
+            localStorage.setItem('studentPhone', phone);
+            await loadUserData(phone);
         }
 
-        async function loadUserData(user) {
+        // Загрузка данных пользователя из Firestore
+        async function loadUserData(phone) {
             try {
-                const docRef = db.collection('students').doc(user.uid);
+                currentPhone = phone;
+                const docRef = db.collection('students').doc(phone);
                 const doc = await docRef.get();
                 
                 if (doc.exists) {
-                    currentStudent = { id: user.uid, ...doc.data() };
-                    updateUI();
+                    // Существующий пользователь
+                    currentStudent = { phone: phone, ...doc.data() };
+                    console.log('Загружены данные:', currentStudent);
                 } else {
-                    // Новый пользователь
+                    // Новый пользователь - создаём профиль
                     const newUser = {
-                        phone: user.phoneNumber || 'unknown',
+                        phone: phone,
                         crystals: 0,
                         xp: 0,
                         streak: 0,
-                        lastVisit: firebase.firestore.FieldValue.serverTimestamp(),
-                        sitesVisited: ['economy'],
-                        name: ''
+                        name: '',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastVisit: firebase.firestore.FieldValue.serverTimestamp()
                     };
+                    
                     await docRef.set(newUser);
-                    currentStudent = { id: user.uid, ...newUser };
-                    updateUI();
+                    currentStudent = newUser;
+                    console.log('Создан новый профиль для:', phone);
                 }
+                
+                // Обновляем UI
+                updateUI();
+                showUserProfile(phone);
+                
+                // Скрываем модальное окно
+                document.getElementById('auth-modal').style.display = 'none';
+                
             } catch (error) {
-                console.error('Ошибка загрузки:', error);
+                console.error('Ошибка загрузки данных:', error);
+                alert('Ошибка подключения к базе данных. Проверь интернет.');
             }
         }
 
+        // Обновление интерфейса
         function updateUI() {
             if (!currentStudent) return;
             
@@ -747,91 +718,70 @@
             if (currentStudent.streak > 0) {
                 document.getElementById('streak-days').textContent = currentStudent.streak;
                 document.getElementById('streak-badge').style.display = 'inline-flex';
+            } else {
+                document.getElementById('streak-badge').style.display = 'none';
             }
         }
 
+        // Показать профиль в шапке
         function showUserProfile(phone) {
             const profile = document.getElementById('user-profile');
             const phoneEl = document.getElementById('user-phone');
             
-            if (phone && phone.startsWith('+7')) {
+            // Форматируем номер для красоты
+            if (phone && phone.startsWith('+7') && phone.length === 12) {
                 phoneEl.textContent = phone.replace(/(\+7)(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 ($2) $3-$4-$5');
             } else {
-                phoneEl.textContent = phone || 'Гость';
+                phoneEl.textContent = phone;
             }
             
             profile.style.display = 'flex';
-            document.getElementById('auth-modal').style.display = 'none';
         }
 
-        async function sendCode() {
-            const phoneInput = document.getElementById('phone-input');
-            const phone = phoneInput.value.replace(/[()\s-]/g, '');
-            
-            if (!phone.match(/^\+7\d{10}$/)) {
-                alert('Введи корректный номер (+7...)');
-                return;
-            }
-
-            try {
-                confirmationResult = await auth.signInWithPhoneNumber(phone, recaptchaVerifier);
-                document.getElementById('phone-section').style.display = 'none';
-                document.getElementById('code-section').style.display = 'block';
-                alert('Код отправлен! Для теста: 123456');
-            } catch (error) {
-                alert('Ошибка: ' + error.message);
-                console.error(error);
-            }
-        }
-
-        async function verifyCode() {
-            const code = document.getElementById('code-input').value;
-            
-            if (code.length !== 6) {
-                alert('Введи 6 цифр');
-                return;
-            }
-
-            try {
-                await confirmationResult.confirm(code);
-            } catch (error) {
-                alert('Неверный код');
-            }
-        }
-
-        function backToPhone() {
-            document.getElementById('code-section').style.display = 'none';
-            document.getElementById('phone-section').style.display = 'block';
-            document.getElementById('code-input').value = '';
-        }
-
-        async function logout() {
-            if (confirm('Выйти из аккаунта?')) {
-                await auth.signOut();
+        // Выход из аккаунта
+        function logout() {
+            if (confirm('Выйти из аккаунта? Твои кристаллы сохранены в облаке.')) {
+                localStorage.removeItem('studentPhone');
+                currentStudent = null;
+                currentPhone = null;
                 location.reload();
             }
         }
 
-        function changeName() {
+        // Изменение имени
+        async function changeName() {
             if (!currentStudent) {
-                alert('Сначала войди!');
+                alert('Сначала войди в систему!');
                 return;
             }
-            const name = prompt('Введи имя:', currentStudent.name || '');
-            if (name) {
-                db.collection('students').doc(currentStudent.id).update({ name: name });
-                currentStudent.name = name;
-                alert('Сохранено!');
+            
+            const newName = prompt('Введи своё имя:', currentStudent.name || '');
+            if (newName && newName.trim()) {
+                try {
+                    await db.collection('students').doc(currentPhone).update({ 
+                        name: newName.trim() 
+                    });
+                    currentStudent.name = newName.trim();
+                    alert('Имя сохранено!');
+                } catch (error) {
+                    alert('Ошибка сохранения: ' + error.message);
+                }
             }
         }
 
-        // Функции для работы с кристаллами (для других страниц)
+        // ==================== РАБОТА С КРИСТАЛЛАМИ ====================
+
+        // Начисление кристаллов (вызывается из других заданий)
         async function addCrystals(amount, reason) {
-            if (!currentStudent) return false;
+            if (!currentStudent || !currentPhone) {
+                console.error('Пользователь не авторизован');
+                return false;
+            }
             
             try {
-                const ref = db.collection('students').doc(currentStudent.id);
-                await ref.update({
+                const userRef = db.collection('students').doc(currentPhone);
+                
+                await userRef.update({
                     crystals: firebase.firestore.FieldValue.increment(amount),
                     history: firebase.firestore.FieldValue.arrayUnion({
                         amount: amount,
@@ -840,21 +790,33 @@
                     })
                 });
                 
-                currentStudent.crystals += amount;
+                // Обновляем локально
+                currentStudent.crystals = (currentStudent.crystals || 0) + amount;
                 document.getElementById('crystals').textContent = currentStudent.crystals;
+                
+                // Показываем уведомление
+                showNotification(`+${amount} кристаллов! ${reason}`);
+                
                 return true;
-            } catch (e) {
-                console.error(e);
+            } catch (error) {
+                console.error('Ошибка начисления:', error);
                 return false;
             }
         }
 
+        // Списание кристаллов (для подсказок/покупок)
         async function spendCrystals(amount, reason) {
-            if (!currentStudent || currentStudent.crystals < amount) return false;
+            if (!currentStudent || !currentPhone) return false;
+            
+            if ((currentStudent.crystals || 0) < amount) {
+                showNotification('Недостаточно кристаллов! 😢');
+                return false;
+            }
             
             try {
-                const ref = db.collection('students').doc(currentStudent.id);
-                await ref.update({
+                const userRef = db.collection('students').doc(currentPhone);
+                
+                await userRef.update({
                     crystals: firebase.firestore.FieldValue.increment(-amount),
                     history: firebase.firestore.FieldValue.arrayUnion({
                         amount: -amount,
@@ -865,17 +827,55 @@
                 
                 currentStudent.crystals -= amount;
                 document.getElementById('crystals').textContent = currentStudent.crystals;
+                
+                showNotification(`-${amount} кристаллов: ${reason}`);
                 return true;
-            } catch (e) {
-                console.error(e);
+            } catch (error) {
+                console.error('Ошибка списания:', error);
                 return false;
             }
         }
 
-        // Экспорт для глобального использования
+        // Уведомление
+        function showNotification(text) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 12px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+                z-index: 10000;
+                font-weight: bold;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            notification.textContent = text;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // CSS для анимации уведомления
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Экспорт функций для глобального доступа (из других файлов)
         window.addCrystals = addCrystals;
         window.spendCrystals = spendCrystals;
         window.getCurrentStudent = () => currentStudent;
+        window.getCurrentPhone = () => currentPhone;
     </script>
 </body>
 </html>
